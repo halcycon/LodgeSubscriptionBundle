@@ -56,7 +56,7 @@ return [
     'services' => [
         'events' => [
             'lodge_subscription.field.subscriber' => [
-                'class'     => \MauticPlugin\LodgeSubscriptionBundle\EventListener\LeadSubscriber::class,
+                'class'     => MauticPlugin\LodgeSubscriptionBundle\EventListener\LeadSubscriber::class,
                 'arguments' => [
                     'doctrine.orm.entity_manager',
                     'lodge_subscription.model.subscription',
@@ -65,19 +65,19 @@ return [
         ],
         'forms' => [
             'lodge_subscription.form.type.payment' => [
-                'class'     => \MauticPlugin\LodgeSubscriptionBundle\Form\Type\PaymentType::class,
+                'class'     => MauticPlugin\LodgeSubscriptionBundle\Form\Type\PaymentType::class,
                 'arguments' => [
                     'doctrine.orm.entity_manager',
                 ],
             ],
             'lodge_subscription.form.type.subscription_settings' => [
-                'class'     => \MauticPlugin\LodgeSubscriptionBundle\Form\Type\SubscriptionSettingsType::class,
+                'class'     => MauticPlugin\LodgeSubscriptionBundle\Form\Type\SubscriptionSettingsType::class,
                 'arguments' => [
                     'doctrine.orm.entity_manager',
                 ],
             ],
             'lodge_subscription.form.type.yearend' => [
-                'class'     => \MauticPlugin\LodgeSubscriptionBundle\Form\Type\YearEndType::class,
+                'class'     => MauticPlugin\LodgeSubscriptionBundle\Form\Type\YearEndType::class,
                 'arguments' => [
                     'doctrine.orm.entity_manager',
                 ],
@@ -85,21 +85,21 @@ return [
         ],
         'models' => [
             'lodge_subscription.model.subscription' => [
-                'class'     => \MauticPlugin\LodgeSubscriptionBundle\Model\SubscriptionModel::class,
+                'class'     => MauticPlugin\LodgeSubscriptionBundle\Model\SubscriptionModel::class,
                 'arguments' => [
                     'doctrine.orm.entity_manager',
                     'mautic.lead.model.field',
                 ],
             ],
             'lodge_subscription.model.payment' => [
-                'class'     => \MauticPlugin\LodgeSubscriptionBundle\Model\PaymentModel::class,
+                'class'     => MauticPlugin\LodgeSubscriptionBundle\Model\PaymentModel::class,
                 'arguments' => [
                     'doctrine.orm.entity_manager',
                     'lodge_subscription.model.subscription',
                 ],
             ],
             'lodge_subscription.model.yearend' => [
-                'class'     => \MauticPlugin\LodgeSubscriptionBundle\Model\YearEndModel::class,
+                'class'     => MauticPlugin\LodgeSubscriptionBundle\Model\YearEndModel::class,
                 'arguments' => [
                     'doctrine.orm.entity_manager',
                     'lodge_subscription.model.subscription',
@@ -109,7 +109,7 @@ return [
         ],
         'integrations' => [
             'lodge_subscription.integration.stripe' => [
-                'class'     => \MauticPlugin\LodgeSubscriptionBundle\Integration\StripeIntegration::class,
+                'class'     => MauticPlugin\LodgeSubscriptionBundle\Integration\StripeIntegration::class,
                 'arguments' => [
                     'event_dispatcher',
                     'mautic.helper.cache_storage',
@@ -132,7 +132,7 @@ return [
         ],
         'other' => [
             'lodge_subscription.helper.stripe' => [
-                'class'     => \MauticPlugin\LodgeSubscriptionBundle\Helper\StripeHelper::class,
+                'class'     => MauticPlugin\LodgeSubscriptionBundle\Helper\StripeHelper::class,
                 'arguments' => [
                     'doctrine.orm.entity_manager',
                     'lodge_subscription.model.subscription',
