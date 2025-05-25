@@ -10,7 +10,6 @@ use Mautic\LeadBundle\Entity\Lead;
 use Mautic\LeadBundle\Model\FieldModel;
 use MauticPlugin\LodgeSubscriptionBundle\Entity\Settings;
 use MauticPlugin\LodgeSubscriptionBundle\Entity\Payment;
-use Psr\Log\LoggerInterface;
 
 class SubscriptionModel extends AbstractCommonModel
 {
@@ -30,11 +29,10 @@ class SubscriptionModel extends AbstractCommonModel
     private const FIELD_PAYMENT_METHOD = 'craft_payment_method';
     private const FIELD_NOTES = 'craft_notes';
 
-    public function __construct(EntityManager $entityManager, FieldModel $fieldModel, LoggerInterface $logger)
+    public function __construct(EntityManager $entityManager, FieldModel $fieldModel)
     {
         $this->entityManager = $entityManager;
         $this->fieldModel = $fieldModel;
-        $this->logger = $logger;
     }
 
     /**
@@ -200,22 +198,16 @@ class SubscriptionModel extends AbstractCommonModel
      */
     public function getSubscriptionAmountForContact(Lead $contact, int $year): float
     {
-        // Get the subscription type for the contact
-        $subscriptionType = $contact->getFieldValue(self::FIELD_SUBSCRIPTION_TYPE);
+        $subscriptionType = $contact->getFieldValue(self::FIELD_SUBSCRIPTION_TYPE) ?: 'Full';
         
-        if (empty($subscriptionType)) {
-            $subscriptionType = 'Full';
-        }
-        
-        // Get the subscription settings for this year
+        // Get the settings for the year
         $settingsRepository = $this->entityManager->getRepository(Settings::class);
         $settings = $settingsRepository->getSettingsForYear($year);
         
         if (!$settings) {
-            return 0.0;
+            throw new \Exception('Settings for year ' . $year . ' not found');
         }
         
-        // Return the appropriate amount based on subscription type
         switch ($subscriptionType) {
             case 'Reduced':
                 return $settings->getAmountReduced();
@@ -245,55 +237,41 @@ class SubscriptionModel extends AbstractCommonModel
             throw new \Exception('Contact not found');
         }
         
-        // Create a new payment record
+        // Create the payment record
         $payment = new Payment();
         $payment->setContactId($contactId);
         $payment->setAmount($amount);
-        $payment->setYear($year);
         $payment->setPaymentDate(new \DateTime());
         $payment->setPaymentMethod($paymentMethod);
-        $payment->setIsArrears($isArrears);
+        $payment->setYear($year);
         $payment->setNotes($notes);
         $payment->setTransactionId($transactionId);
+        $payment->setIsCurrent(!$isArrears);
+        $payment->setIsArrears($isArrears);
         
         $this->entityManager->persist($payment);
-        $this->entityManager->flush();
         
-        // Update contact fields
-        $currentYear = (int) date('Y');
-        
-        // If payment is for the current year, update the current paid status
-        if ($year === $currentYear && !$isArrears) {
-            // Update the current year paid field
-            $paidFieldAlias = self::FIELD_PAID_PREFIX . $year . self::FIELD_PAID_SUFFIX;
-            $this->updateContactField($contact, $paidFieldAlias, true);
-            
-            // If full payment, update paid_current to true
-            $owedCurrent = (float) $contact->getFieldValue(self::FIELD_OWED_CURRENT);
-            if ($amount >= $owedCurrent) {
-                $this->updateContactField($contact, self::FIELD_PAID_CURRENT, true);
-                $this->updateContactField($contact, self::FIELD_OWED_CURRENT, 0);
-            } else {
-                // Partial payment
-                $this->updateContactField($contact, self::FIELD_OWED_CURRENT, $owedCurrent - $amount);
-            }
-        }
-        
-        // If payment is for arrears
+        // Update the contact's fields
         if ($isArrears) {
-            $owedArrears = (float) $contact->getFieldValue(self::FIELD_OWED_ARREARS);
-            $newOwedArrears = max(0, $owedArrears - $amount);
-            $this->updateContactField($contact, self::FIELD_OWED_ARREARS, $newOwedArrears);
+            // Reduce arrears amount
+            $currentArrears = (float) $contact->getFieldValue(self::FIELD_OWED_ARREARS);
+            $newArrears = max(0, $currentArrears - $amount);
+            $this->updateContactField($contact, self::FIELD_OWED_ARREARS, $newArrears);
+        } else {
+            // Reduce current amount owed
+            $currentOwed = (float) $contact->getFieldValue(self::FIELD_OWED_CURRENT);
+            $newOwed = max(0, $currentOwed - $amount);
+            $this->updateContactField($contact, self::FIELD_OWED_CURRENT, $newOwed);
             
-            // If the payment is for a specific year, update that year's paid field
-            if ($year < $currentYear) {
-                $paidFieldAlias = self::FIELD_PAID_PREFIX . $year . self::FIELD_PAID_SUFFIX;
-                $this->updateContactField($contact, $paidFieldAlias, true);
+            // If fully paid, mark as paid for the year
+            if ($newOwed == 0) {
+                $this->updateContactField($contact, self::FIELD_PAID_CURRENT, true);
+                $this->updateContactField($contact, self::FIELD_PAID_PREFIX . $year . self::FIELD_PAID_SUFFIX, true);
             }
         }
         
-        // Update the last payment date
-        $this->updateContactField($contact, self::FIELD_LAST_PAYMENT_DATE, date('Y-m-d'));
+        // Update last payment date
+        $this->updateContactField($contact, self::FIELD_LAST_PAYMENT_DATE, new \DateTime());
         
         // Update the payment method if provided
         if (!empty($paymentMethod)) {
@@ -489,9 +467,6 @@ class SubscriptionModel extends AbstractCommonModel
             'contacts_processed' => $contactsProcessed,
             'fields_created' => $fieldsCreated,
             'log' => $log,
-        ];
-    }
-} 
         ];
     }
 } 

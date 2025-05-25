@@ -163,6 +163,8 @@ class PaymentController extends AbstractFormController
      */
     public function executeAction(Request $request, $objectAction, $objectId = 0, $objectSubId = 0, $objectModel = '')
     {
+        $this->request = $request;
+        
         if ($objectAction === 'new' && $objectId) {
             return $this->newAction((int) $objectId);
         }

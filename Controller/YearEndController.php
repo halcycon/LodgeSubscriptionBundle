@@ -112,6 +112,8 @@ class YearEndController extends AbstractFormController
      */
     public function executeAction(Request $request, $objectAction, $objectId = 0, $objectSubId = 0, $objectModel = '')
     {
+        $this->request = $request;
+        
         if ($objectAction === 'index') {
             return $this->indexAction();
         }

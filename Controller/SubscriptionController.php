@@ -138,6 +138,8 @@ class SubscriptionController extends AbstractFormController
      */
     public function executeAction(Request $request, $objectAction, $objectId = 0, $objectSubId = 0, $objectModel = '')
     {
+        $this->request = $request;
+        
         if ($objectAction === 'view' && $objectId) {
             return $this->viewAction((int) $objectId);
         }

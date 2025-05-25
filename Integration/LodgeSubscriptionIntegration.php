@@ -1,16 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
 namespace MauticPlugin\LodgeSubscriptionBundle\Integration;
 
 use Mautic\IntegrationsBundle\Integration\BasicIntegration;
 use Mautic\IntegrationsBundle\Integration\Interfaces\BasicInterface;
 use Mautic\IntegrationsBundle\Integration\Interfaces\ConfigFormInterface;
-use Mautic\IntegrationsBundle\Integration\Interfaces\IntegrationInterface;
 use MauticPlugin\LodgeSubscriptionBundle\Form\Type\ConfigIntegrationType;
 
-class LodgeSubscriptionIntegration extends BasicIntegration implements BasicInterface, ConfigFormInterface, IntegrationInterface
+class LodgeSubscriptionIntegration extends BasicIntegration implements BasicInterface, ConfigFormInterface
 {
     public const NAME = 'LodgeSubscription';
     
