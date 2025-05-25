@@ -6,6 +6,7 @@ namespace MauticPlugin\LodgeSubscriptionBundle\Controller;
 
 use Mautic\CoreBundle\Controller\AbstractFormController;
 use MauticPlugin\LodgeSubscriptionBundle\Form\Type\YearEndType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class YearEndController extends AbstractFormController
@@ -44,7 +45,7 @@ class YearEndController extends AbstractFormController
     /**
      * Execute year-end process
      */
-    public function executeAction(): Response
+    public function processYearEndAction(): Response
     {
         $form = $this->get('form.factory')->create(YearEndType::class);
         
@@ -104,5 +105,25 @@ class YearEndController extends AbstractFormController
             'contentTemplate' => 'LodgeSubscriptionBundle:YearEnd:log.html.php',
             'pagetitle' => 'Year-End Log: ' . $year,
         ]);
+    }
+    
+    /**
+     * Execute action for AJAX modal.
+     */
+    public function executeAction(Request $request, $objectAction, $objectId = 0, $objectSubId = 0, $objectModel = ''): Response
+    {
+        if ($objectAction === 'index') {
+            return $this->indexAction();
+        }
+        
+        if ($objectAction === 'process') {
+            return $this->processYearEndAction();
+        }
+        
+        if ($objectAction === 'log' && $objectId) {
+            return $this->viewLogAction((int) $objectId);
+        }
+        
+        return $this->notFound();
     }
 } 

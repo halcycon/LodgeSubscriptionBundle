@@ -30,7 +30,7 @@ return [
             ],
             'lodge_subscription_yearend_execute' => [
                 'path'       => '/lodge/yearend/execute',
-                'controller' => 'MauticPlugin\LodgeSubscriptionBundle\Controller\YearEndController::executeAction',
+                'controller' => 'MauticPlugin\LodgeSubscriptionBundle\Controller\YearEndController::processYearEndAction',
             ],
         ],
         'public' => [

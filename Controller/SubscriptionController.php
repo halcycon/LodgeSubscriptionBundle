@@ -136,14 +136,14 @@ class SubscriptionController extends AbstractFormController
     /**
      * Execute action for AJAX modal.
      */
-    public function executeAction(string $objectAction, int $objectId = 0): Response
+    public function executeAction(Request $request, $objectAction, $objectId = 0, $objectSubId = 0, $objectModel = ''): Response
     {
-        if ($objectAction === 'view') {
-            return $this->viewAction($objectId);
+        if ($objectAction === 'view' && $objectId) {
+            return $this->viewAction((int) $objectId);
         }
         
-        if ($objectAction === 'generatePaymentLink') {
-            return $this->generatePaymentLinkAction($objectId);
+        if ($objectAction === 'generatePaymentLink' && $objectId) {
+            return $this->generatePaymentLinkAction((int) $objectId);
         }
         
         return $this->notFound();
