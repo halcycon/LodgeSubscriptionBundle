@@ -54,6 +54,37 @@ return [
     ],
 
     'services' => [
+        'integrations' => [
+            'mautic.integration.lodgesubscription' => [
+                'class'     => MauticPlugin\LodgeSubscriptionBundle\Integration\LodgeSubscriptionIntegration::class,
+                'tags'      => [
+                    'mautic.integration',
+                    'mautic.basic_integration',
+                    'mautic.config_integration',
+                ],
+            ],
+            'lodge_subscription.integration.stripe' => [
+                'class'     => MauticPlugin\LodgeSubscriptionBundle\Integration\StripeIntegration::class,
+                'arguments' => [
+                    'event_dispatcher',
+                    'mautic.helper.cache_storage',
+                    'doctrine.orm.entity_manager',
+                    'session.factory',
+                    'request_stack',
+                    'router',
+                    'translator',
+                    'logger',
+                    'mautic.helper.encryption',
+                    'mautic.lead.model.lead',
+                    'mautic.lead.model.company',
+                    'mautic.helper.paths',
+                    'mautic.core.model.notification',
+                    'mautic.lead.model.field',
+                    'mautic.plugin.model.integration_entity',
+                    'mautic.lead.model.dnc',
+                ],
+            ],
+        ],
         'events' => [
             'lodge_subscription.field.subscriber' => [
                 'class'     => MauticPlugin\LodgeSubscriptionBundle\EventListener\LeadSubscriber::class,
@@ -82,6 +113,12 @@ return [
                     'doctrine.orm.entity_manager',
                 ],
             ],
+            'lodge_subscription.form.type.config' => [
+                'class'     => MauticPlugin\LodgeSubscriptionBundle\Form\Type\ConfigType::class,
+            ],
+            'lodge_subscription.form.type.config_integration' => [
+                'class'     => MauticPlugin\LodgeSubscriptionBundle\Form\Type\ConfigIntegrationType::class,
+            ],
         ],
         'models' => [
             'lodge_subscription.model.subscription' => [
@@ -104,29 +141,6 @@ return [
                     'doctrine.orm.entity_manager',
                     'lodge_subscription.model.subscription',
                     'mautic.lead.model.field',
-                ],
-            ],
-        ],
-        'integrations' => [
-            'lodge_subscription.integration.stripe' => [
-                'class'     => MauticPlugin\LodgeSubscriptionBundle\Integration\StripeIntegration::class,
-                'arguments' => [
-                    'event_dispatcher',
-                    'mautic.helper.cache_storage',
-                    'doctrine.orm.entity_manager',
-                    'session.factory',
-                    'request_stack',
-                    'router',
-                    'translator',
-                    'logger',
-                    'mautic.helper.encryption',
-                    'mautic.lead.model.lead',
-                    'mautic.lead.model.company',
-                    'mautic.helper.paths',
-                    'mautic.core.model.notification',
-                    'mautic.lead.model.field',
-                    'mautic.plugin.model.integration_entity',
-                    'mautic.lead.model.dnc',
                 ],
             ],
         ],
@@ -161,6 +175,17 @@ return [
     ],
 
     'parameters' => [
-        'subscription_amounts' => [],
+        'standard_subscription_amount' => 250.00,
+        'senior_subscription_amount' => 125.00,
+        'stripe_webhook_secret' => '',
+        'payment_success_url' => '',
+        'payment_cancel_url' => '',
+    ],
+    
+    'config' => [
+        'form' => [
+            'formTheme' => 'LodgeSubscriptionBundle:FormTheme\Config',
+            'formType' => MauticPlugin\LodgeSubscriptionBundle\Form\Type\ConfigType::class,
+        ],
     ],
 ]; 

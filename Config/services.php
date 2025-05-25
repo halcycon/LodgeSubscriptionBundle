@@ -14,12 +14,17 @@ return function (ContainerConfigurator $configurator) {
         ->public();
 
     $excludes = [
-        'Integration/StripeIntegration.php',
-        'Entity', // Exclude Entity directory entirely
+        'Integration', // Exclude all integrations from autowiring
+        'Entity',      // Exclude Entity directory entirely
     ];
 
     $services->load('MauticPlugin\\LodgeSubscriptionBundle\\', '../')
         ->exclude('../{'.implode(',', array_merge(MauticCoreExtension::DEFAULT_EXCLUDES, $excludes)).'}');
+    
+    // Register the main integration manually
+    $services->set('mautic.integration.lodgesubscription', \MauticPlugin\LodgeSubscriptionBundle\Integration\LodgeSubscriptionIntegration::class)
+        ->tag('mautic.integration')
+        ->tag('mautic.basic_integration');
     
     // Register repositories by getting them from the entity manager
     $services->set('MauticPlugin\\LodgeSubscriptionBundle\\Entity\\PaymentRepository')
