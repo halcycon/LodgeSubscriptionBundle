@@ -110,7 +110,7 @@ class YearEndController extends AbstractFormController
     /**
      * Execute action for AJAX modal.
      */
-    public function executeAction(string $objectAction, int $objectId = 0, ?int $objectSubId = 0): Response
+    public function executeAction(Request $request, $objectAction, $objectId = 0, $objectSubId = 0, $objectModel = '')
     {
         if ($objectAction === 'index') {
             return $this->indexAction();

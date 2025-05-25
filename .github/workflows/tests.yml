@@ -104,9 +104,13 @@ jobs:
           working-directory: ${{ env.PLUGIN_DIR }}
           verbose: true
       
+      - name: Ensure logs directory exists
+        run: mkdir -p var/logs
+        
       - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: mautic-logs
-          path: var/logs/ 
+          path: var/logs/
+          if-no-files-found: warn 
