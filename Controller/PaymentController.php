@@ -161,7 +161,7 @@ class PaymentController extends AbstractFormController
     /**
      * Execute action for AJAX modal.
      */
-    public function executeAction($objectAction, $objectId = 0, $objectSubId = 0, $objectModel = '')
+    public function executeAction(Request $request, $objectAction, $objectId = 0, $objectSubId = 0, $objectModel = '')
     {
         if ($objectAction === 'new' && $objectId) {
             return $this->newAction((int) $objectId);
