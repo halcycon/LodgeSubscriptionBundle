@@ -30,16 +30,23 @@ jobs:
           MYSQL_DATABASE: mautic
         ports:
           - 3306/tcp
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --shm-size=2gb
+          --name=${{ matrix.db-types }}
+          --tmpfs=/var/lib/mysql
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         path: ${{ env.PLUGIN_DIR }}
 
     - name: Checkout mautic
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         repository: mautic/mautic
         path: .
@@ -49,18 +56,47 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
+        ini-values: -dpcov.enabled=0, pcov.directory=."
         extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql, pdo_mysql
         coverage: pcov
 
-    - name: Setup database
+    - name: add MySQL config file
+      run: |
+        mysqldump --version
+        mysqldump --print-defaults
+        cp .github/ci-files/.my.cnf ~/.my.cnf
+        mysqldump --print-defaults
+
+    - name: Set SYMFONY_ENV to test
+      run: |
+        echo "SYMFONY_ENV=test" >> $GITHUB_ENV
+        echo "MAUTIC_ENV=test" >> $GITHUB_ENV
+
+    - name: Get composer cache directory
+      id: composer-cache
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: Cache composer dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: ${{ runner.os }}-composer-
+
+    - name: Install Composer dependencies
+      run: composer install
+
+    - name: Install Mautic
       env:
         DB_PORT: ${{ job.services.database.ports[3306] }}
       run: |
-        echo "DB_PORT=$DB_PORT" >> $GITHUB_ENV
-        echo "DATABASE_URL=${{ matrix.database-url }}:$DB_PORT/mautic?serverVersion=5.7" >> $GITHUB_ENV
+        cp ./.github/ci-files/local.php ./app/config/local.php
+        php bin/console mautic:install --force http://localhost
 
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+    - name: Install Plugins
+      env:
+        DB_PORT: ${{ job.services.database.ports[3306] }}
+      run: php bin/console mautic:plugins:install --env=dev
 
     - name: Run Code Style check
       run: bin/php-cs-fixer fix ${{ env.PLUGIN_DIR }} --config=.php-cs-fixer.php -v --dry-run --show-progress=dots --diff
