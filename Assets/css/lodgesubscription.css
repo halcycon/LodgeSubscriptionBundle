@@ -1,0 +1,93 @@
+/**
+ * Styles for the Lodge Subscription Plugin
+ */
+
+/* Dashboard statistics */
+.lodge-stats-container {
+    margin-bottom: 20px;
+}
+
+.lodge-stats-card {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.lodge-stats-card h3 {
+    margin-top: 0;
+    color: #4e5e9e;
+}
+
+.lodge-stats-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3E3E3E;
+}
+
+.lodge-stats-label {
+    font-size: 14px;
+    color: #777;
+}
+
+/* Payment listing */
+.lodge-payment-list {
+    margin-top: 20px;
+}
+
+.lodge-payment-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.lodge-payment-item:hover {
+    background-color: #f8f8f8;
+}
+
+.lodge-payment-amount {
+    font-weight: bold;
+    color: #28a745;
+}
+
+.lodge-payment-date {
+    color: #777;
+    font-size: 12px;
+}
+
+/* Subscription details */
+.lodge-subscription-details {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.lodge-subscription-summary {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.lodge-subscription-arrears {
+    color: #dc3545;
+}
+
+.lodge-subscription-current {
+    color: #28a745;
+}
+
+/* Year-end process form */
+.lodge-yearend-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+/* Payment buttons */
+.lodge-payment-button {
+    margin-right: 10px;
+} 
