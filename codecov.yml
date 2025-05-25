@@ -1,7 +1,7 @@
 codecov:
   disable_default_path_fixes: true
 fixes:
-  - "/home/runner/work/*/plugins/LodgeSubscriptionBundle/::"
+  - "/home/runner/work/LodgeSubscriptionBundle/LodgeSubscriptionBundle/plugins/LodgeSubscriptionBundle/::"
 
 coverage:
   status:
