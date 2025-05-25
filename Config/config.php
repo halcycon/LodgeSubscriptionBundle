@@ -126,6 +126,7 @@ return [
                 'arguments' => [
                     'doctrine.orm.entity_manager',
                     'mautic.lead.model.field',
+                    'logger',
                 ],
             ],
             'lodge_subscription.model.payment' => [

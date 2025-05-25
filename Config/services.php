@@ -68,3 +68,8 @@ return function (ContainerConfigurator $configurator) {
     $services->alias('lodge_subscription.model.yearend', \MauticPlugin\LodgeSubscriptionBundle\Model\YearEndModel::class);
     $services->alias('lodge_subscription.helper.stripe', \MauticPlugin\LodgeSubscriptionBundle\Helper\StripeHelper::class);
 }; 
+    $services->alias('lodge_subscription.model.subscription', \MauticPlugin\LodgeSubscriptionBundle\Model\SubscriptionModel::class);
+    $services->alias('lodge_subscription.model.payment', \MauticPlugin\LodgeSubscriptionBundle\Model\PaymentModel::class);
+    $services->alias('lodge_subscription.model.yearend', \MauticPlugin\LodgeSubscriptionBundle\Model\YearEndModel::class);
+    $services->alias('lodge_subscription.helper.stripe', \MauticPlugin\LodgeSubscriptionBundle\Helper\StripeHelper::class);
+}; 

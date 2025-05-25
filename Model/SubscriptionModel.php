@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace MauticPlugin\LodgeSubscriptionBundle\Model;
 
 use Doctrine\ORM\EntityManager;
+use Mautic\CoreBundle\Model\AbstractCommonModel;
 use Mautic\LeadBundle\Entity\Lead;
 use Mautic\LeadBundle\Model\FieldModel;
 use MauticPlugin\LodgeSubscriptionBundle\Entity\Settings;
 use MauticPlugin\LodgeSubscriptionBundle\Entity\Payment;
+use Psr\Log\LoggerInterface;
 
-class SubscriptionModel
+class SubscriptionModel extends AbstractCommonModel
 {
     private EntityManager $entityManager;
     private FieldModel $fieldModel;
@@ -28,10 +30,11 @@ class SubscriptionModel
     private const FIELD_PAYMENT_METHOD = 'craft_payment_method';
     private const FIELD_NOTES = 'craft_notes';
 
-    public function __construct(EntityManager $entityManager, FieldModel $fieldModel)
+    public function __construct(EntityManager $entityManager, FieldModel $fieldModel, LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
         $this->fieldModel = $fieldModel;
+        $this->logger = $logger;
     }
 
     /**
@@ -486,6 +489,9 @@ class SubscriptionModel
             'contacts_processed' => $contactsProcessed,
             'fields_created' => $fieldsCreated,
             'log' => $log,
+        ];
+    }
+} 
         ];
     }
 } 
