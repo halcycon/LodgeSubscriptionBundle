@@ -16,7 +16,7 @@ jobs:
     
     strategy:
       matrix:
-        php-versions: ['8.0']
+        php-versions: ['8.1']
         db-types: ['mysql']
         mautic-versions: ['6.0']
       
@@ -96,7 +96,7 @@ jobs:
         run: cat ${{ env.PLUGIN_DIR }}/coverage.xml
       
       - name: Upload coverage report
-        if: ${{ matrix.php-versions == '8.0' && matrix.db-types == 'mysql' && matrix.mautic-versions == '6.0' }}
+        if: ${{ matrix.php-versions == '8.1' && matrix.db-types == 'mysql' && matrix.mautic-versions == '6.0' }}
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
