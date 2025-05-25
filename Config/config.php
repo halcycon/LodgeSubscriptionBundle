@@ -114,7 +114,7 @@ return [
                     'event_dispatcher',
                     'mautic.helper.cache_storage',
                     'doctrine.orm.entity_manager',
-                    'session',
+                    'session.factory',
                     'request_stack',
                     'router',
                     'translator',
